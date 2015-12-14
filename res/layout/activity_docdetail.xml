@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/darkwhite"
+    android:orientation="vertical" >
+    
+    <include layout="@layout/action_bar"/>
+
+    <ScrollView 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:background="@color/white"
+        android:scrollbars="none"
+        >
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp"
+        >
+    <TextView
+        android:id="@+id/tv_doctitle" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:text="标        题："
+        />
+     <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/line" />
+    <TextView
+        android:id="@+id/tv_doctype" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:text="文电种类："
+        />
+     <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/line" />
+    <TextView
+        android:id="@+id/tv_doctime" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:text="发文日期："
+        />
+     <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/line" />
+        
+     <TextView 
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:textSize="16sp"
+         android:text="审批记录:"
+         />
+     
+     <HorizontalScrollView 
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center"
+         android:scrollbars="none"
+         >
+         
+         <TableLayout 
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:stretchColumns="*"
+         android:id="@+id/tab"
+         >
+         
+         <TableRow 
+             android:layout_margin="0.5dp"
+             >
+             <TextView 
+                 android:layout_width="100dp"
+                 android:layout_height="wrap_content"
+                 android:text="环节名称"
+                 android:textColor="#000000"
+                 android:gravity="center"
+                 />
+             <TextView 
+                 android:layout_width="100dp"
+                 android:layout_height="wrap_content"
+                 android:text="审批人"
+                 android:textColor="#000000"
+                 android:gravity="center"
+                 />
+             <TextView 
+                 android:layout_width="100dp"
+                 android:layout_height="wrap_content"
+                 android:text="审批类型"
+                 android:textColor="#000000"
+                 android:gravity="center"
+                 />
+             <TextView 
+                 android:layout_width="100dp"
+                 android:layout_height="wrap_content"
+                 android:text="审批意见"
+                 android:textColor="#000000"
+                 android:gravity="center"
+                 />
+             <TextView 
+                 android:layout_width="100dp"
+                 android:layout_height="wrap_content"
+                 android:text="到达时间"
+                 android:textColor="#000000"
+                 android:gravity="center"
+                 />
+             <TextView 
+                 android:layout_width="100dp"
+                 android:layout_height="wrap_content"
+                 android:text="发出时间"
+                 android:textColor="#000000"
+                 android:gravity="center"
+                 />
+         </TableRow>
+     </TableLayout>
+         
+     </HorizontalScrollView>
+     
+     
+     <ImageView
+            android:layout_width="match_parent"
+            android:id="@+id/iv_gosign"
+            android:layout_height="wrap_content"
+            android:background="@drawable/line" />
+
+        <Button
+            android:id="@+id/btn_gosave"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button"
+            android:text="点击签阅"
+            android:textSize="16sp" />
+     
+    </LinearLayout>
+    </ScrollView>
+    
+</LinearLayout>

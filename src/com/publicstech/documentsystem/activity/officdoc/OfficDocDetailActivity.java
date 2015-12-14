@@ -1,0 +1,245 @@
+package com.publicstech.documentsystem.activity.officdoc;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.ksoap2.serialization.SoapObject;
+
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+import com.publicstech.documentsystem.Const;
+import com.publicstech.documentsystem.MApplication;
+import com.publicstech.documentsystem.R;
+import com.publicstech.documentsystem.base.BaseActivity;
+import com.publicstech.documentsystem.bean.ApproveRecordBean;
+import com.publicstech.documentsystem.bean.ApproveRecordBean.Record;
+import com.publicstech.documentsystem.bean.OfficDocAlListBean.YBOffcDoc;
+import com.publicstech.documentsystem.bean.OfficDocDetailBean;
+import com.publicstech.documentsystem.bean.OfficDocDetailBean.OfficDocDetail;
+import com.publicstech.documentsystem.bean.OfficDocListBean.OfficDoc;
+import com.publicstech.documentsystem.tools.ToolAlert;
+import com.publicstech.documentsystem.tools.ToolDensity;
+import com.publicstech.documentsystem.tools.ToolJson;
+import com.publicstech.documentsystem.tools.ToolSOAP;
+import com.publicstech.documentsystem.tools.ToolSOAP.WebServiceCallBack;
+import com.publicstech.documentsystem.tools.ToolToast;
+
+public class OfficDocDetailActivity extends BaseActivity {
+
+	@InjectView(R.id.tv_doctitle)
+	TextView tvTitle;
+	@InjectView(R.id.tv_doctype)
+	TextView tvType;
+	@InjectView(R.id.tv_doctime)
+	TextView tvTime;
+	@InjectView(R.id.tab)
+	TableLayout tabLayout;
+	@InjectView(R.id.iv_gosign)
+	ImageView ivGosign;
+	@InjectView(R.id.btn_gosave)
+	Button btnGosave;
+	
+	private OfficDocDetail officdocDetail;
+	private List<Record> record;
+	private ApproveRecordBean approveRecordBean;
+	private HashMap<String, String> properties = new HashMap<String, String>();
+	private String param;
+	private OfficDoc officedoc;
+	private YBOffcDoc ybofficDoc;
+	
+	/**
+	 * 添加审批记录
+	 */
+	protected void addTab() {
+		for (int i = 0; i < approveRecordBean.ds.size(); i++) {
+			TableRow tr = new TableRow(this);
+			tr.setLayoutParams(new TableLayout.LayoutParams(ToolDensity.dip2px(this, 600),LayoutParams.WRAP_CONTENT));
+			TextView tv = new TextView(this);
+			android.widget.TableRow.LayoutParams params = new TableRow.LayoutParams(ToolDensity.dip2px(this, 100),LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.CENTER;
+			tv.setLayoutParams(params);
+			tv.setText(record.get(i).StepName);
+			tr.addView(tv);
+			
+			TextView tv1 = new TextView(this);
+			android.widget.TableRow.LayoutParams params1 = new TableRow.LayoutParams(ToolDensity.dip2px(this, 100),LayoutParams.WRAP_CONTENT);
+			params1.gravity = Gravity.CENTER;
+			tv1.setLayoutParams(params1);
+			tv1.setText(record.get(i).Real_Name);	
+			tr.addView(tv1);
+			
+			TextView tv2 = new TextView(this);
+			android.widget.TableRow.LayoutParams params2 = new TableRow.LayoutParams(ToolDensity.dip2px(this, 100),LayoutParams.WRAP_CONTENT);
+			params2.gravity = Gravity.CENTER;
+			tv2.setLayoutParams(params2);
+			tv2.setText(record.get(i).PostilType);	
+			tr.addView(tv2);
+			
+			TextView tv3 = new TextView(this);
+			android.widget.TableRow.LayoutParams params3 = new TableRow.LayoutParams(ToolDensity.dip2px(this, 100),LayoutParams.WRAP_CONTENT);
+			params3.gravity = Gravity.CENTER;
+			tv3.setLayoutParams(params3);
+			tv3.setText(record.get(i).PostilDesc);	
+			tr.addView(tv3);
+			
+			TextView tv4 = new TextView(this);
+			android.widget.TableRow.LayoutParams params4 = new TableRow.LayoutParams(ToolDensity.dip2px(this, 100),LayoutParams.WRAP_CONTENT);
+			params4.gravity = Gravity.CENTER;
+			tv4.setLayoutParams(params4);
+			tv4.setText(record.get(i).StartDate);	
+			tr.addView(tv4);
+			
+			TextView tv5 = new TextView(this);
+			android.widget.TableRow.LayoutParams params5 = new TableRow.LayoutParams(ToolDensity.dip2px(this, 100),LayoutParams.WRAP_CONTENT);
+			params5.gravity = Gravity.CENTER;
+			tv5.setLayoutParams(params5);
+			tv5.setText(record.get(i).EndDate);	
+			tr.addView(tv5);
+			tabLayout.addView(tr);
+		}
+	}
+	@Override
+	public int bindLayout() {
+		return R.layout.activity_docdetail;
+	}
+
+
+	@Override
+	public void initView(View view) {
+		ButterKnife.inject(this);
+		ToolAlert.loading(this, "正在加载中...");
+		Intent intent = getIntent();
+		int page = intent.getIntExtra("page", 0);
+		if(page == 0){
+			officedoc = (OfficDoc) intent.getSerializableExtra("doc");
+			param = officedoc.RecID;
+			MApplication.assignData(Const.RECID, param);
+			ivGosign.setVisibility(View.VISIBLE);
+			btnGosave.setVisibility(View.VISIBLE);
+			
+		}else if(page == 1){
+			ybofficDoc = (YBOffcDoc)intent.getSerializableExtra("doc");
+			param =  ybofficDoc.RecID;
+			ivGosign.setVisibility(View.GONE);
+			btnGosave.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void doBusiness(Context mContext) {
+		properties.put("recID", param);
+		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, Const.GETDOCDETAIL, properties , new WebServiceCallBack() {
+
+			@Override
+			public void onSucced(SoapObject result) {
+				if(result != null){
+					String string = result.getProperty(0).toString();
+					if("404".equals(string)){
+						ToolToast.showToast(OfficDocDetailActivity.this, "没有该文电详情");
+					}else{
+						OfficDocDetailBean jsonBean = ToolJson.getJsonBean(string, OfficDocDetailBean.class);
+						officdocDetail = jsonBean.ds.get(0);
+						tvTitle.setText("标        题：" + officdocDetail.FileTitle);
+						tvType.setText("公文种类：" + officdocDetail.FileDZ);
+						tvTime.setText("发文日期：" + officdocDetail.CreateDate);
+					}
+					getAutoRecord(Const.AUDITRECORDDOC,param);
+				}else{
+					ToolToast.showToast(OfficDocDetailActivity.this, "联网失败");
+					ToolAlert.closeLoading();
+				}
+			}
+			
+			@Override
+			public void onFailure(String result) {
+			if(result != null){
+				Log.d(TAG, result);
+				}
+			}
+		});
+		
+		
+	}
+
+	protected void getAutoRecord(String method,String param) {
+		properties.remove("recID");
+		properties.put("DocID", param);
+		properties.put("userID", MApplication.gainData(Const.USERID).toString());
+		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
+
+			@Override
+			public void onSucced(SoapObject result) {
+				
+				if(result != null){
+					String string = result.getProperty(0).toString();
+					Log.d(TAG, string);
+					if("404".equals(string)){
+						ToolAlert.closeLoading();
+						ToolToast.showToast(OfficDocDetailActivity.this, "没有该记录");
+					}else{
+						approveRecordBean = ToolJson.getJsonBean(string, ApproveRecordBean.class);
+						record = approveRecordBean.ds;
+						addTab();
+						ToolAlert.closeLoading();
+					}
+				}else{
+					ToolToast.showToast(OfficDocDetailActivity.this, "联网失败");
+					ToolAlert.closeLoading();
+				}
+			}
+			
+			@Override
+			public void onFailure(String result) {
+				if(result != null){
+					Log.d(TAG, result);
+				}
+				ToolAlert.closeLoading();
+				ToolToast.showToast(OfficDocDetailActivity.this, "联网错误，请检查网络连接");
+			}
+		});
+	}
+	@Override
+	public void resume() {
+
+	}
+
+	@Override
+	public void destroy() {
+
+	}
+	
+	@OnClick(R.id.btn_gosave)
+	public void OnGoSave(){
+			
+		int stepNo = 0;
+		for (Record re : record) {
+			if(re.PostilUserID.equals(MApplication.gainData(Const.USERID).toString())){
+				stepNo = Integer.parseInt(re.StepNo);
+			}
+		}
+		
+		if(stepNo == 2 || stepNo == 3 || stepNo == 5){
+			Intent intent = new Intent(this,OfficSignActivity.class);
+			intent.putExtra("stepNo", stepNo);
+			startActivity(intent);
+		}else{
+			ToolToast.showToast(this, "如需签阅，请在电脑端操作");
+			return;
+		}
+		
+		}
+
+}
