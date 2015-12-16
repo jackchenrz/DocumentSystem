@@ -56,16 +56,32 @@ public class LoginActivity extends BaseActivity{
 			ToolToast.showToast(this, "帐号或密码不能为空");
 			return;
 		}
-		MApplication.assignData(Const.USERNAME, userName);
 		ToolAlert.loading(this, "正在登陆，请稍后...", false);
-		matchUser(userName,pwd);
+		if(Const.LOCAL.equalsIgnoreCase(userName) && Const.LOCALPWD.equals(pwd)){
+			ToolAlert.closeLoading();
+			Intent intent = new Intent(this,SettingActivity.class);
+			startActivity(intent);
+		}else{
+			MApplication.assignData(Const.USERNAME, userName);
+			url = "http://" + ToolSP.getString(this, Const.SERVICE_IP, "") + ":" + ToolSP.getString(this, Const.SERVICE_PORT, "") + "/RecSerApp.asmx";
+			if("".equals(ToolSP.getString(this, Const.SERVICE_IP, ""))){
+				ToolAlert.closeLoading();
+				ToolToast.showToast(this, "请先联系管理员设置IP地址");
+				return;
+			}
+			MApplication.assignData(Const.SERVICE_URL, url);
+			matchUser(userName,pwd);
+		}
 	}
 
 	private void matchUser(final String userName, final String pwd) {
+		
+		
+		
 		HashMap<String, String> properties = new HashMap<String, String>();
 		properties.put("userName", userName);
 		properties.put("passWord", pwd);
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, Const.LOGIN, properties , new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, Const.LOGIN, properties , new WebServiceCallBack() {
 			
 			@Override
 			public void onSucced(SoapObject result) {
@@ -134,6 +150,7 @@ public class LoginActivity extends BaseActivity{
 		
 	}
 	private long exitTime = 0;
+	private String url;
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

@@ -20,9 +20,6 @@ import com.publicstech.documentsystem.R;
 import com.publicstech.documentsystem.activity.officdoc.OfficDocDetailActivity;
 import com.publicstech.documentsystem.adapter.CommonAdapter;
 import com.publicstech.documentsystem.base.BaseFragment;
-import com.publicstech.documentsystem.bean.DocAlListBean.YBDoc;
-import com.publicstech.documentsystem.bean.DocListBean;
-import com.publicstech.documentsystem.bean.DocListBean.Doc;
 import com.publicstech.documentsystem.bean.OfficDocAlListBean;
 import com.publicstech.documentsystem.bean.OfficDocAlListBean.YBOffcDoc;
 import com.publicstech.documentsystem.bean.OfficDocListBean;
@@ -47,8 +44,9 @@ public class OfficDocListFragment extends BaseFragment {
 	private OfficDocAlListBean officDocListBeanal;
 	private int page;
 	private String method;
+	private String url;
 	public View initView() {
-		
+		url = MApplication.gainData(Const.SERVICE_URL).toString();
 		View view = View.inflate(getActivity(),R.layout.fragment_common, null);
 		ButterKnife.inject(this, view);
 		lvAutodoclist.setOnRefreshListener(new OnRefreshListener() {
@@ -57,7 +55,7 @@ public class OfficDocListFragment extends BaseFragment {
 			public void onRefresh() {
 				HashMap<String, String> properties = new HashMap<String, String>();
 				properties.put("userID", MApplication.gainData(Const.USERID).toString());
-				ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, method, properties, new WebServiceCallBack() {
+				ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, method, properties, new WebServiceCallBack() {
 					
 					@Override
 					public void onSucced(SoapObject result) {

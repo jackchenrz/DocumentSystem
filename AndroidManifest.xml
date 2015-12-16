@@ -32,6 +32,7 @@
         </activity>
         <activity android:name="com.publicstech.documentsystem.activity.LoginActivity"/>
         <activity android:name="com.publicstech.documentsystem.activity.SelectActivity"/>
+        <activity android:name="com.publicstech.documentsystem.activity.SettingActivity"/>
         
         <activity android:name="com.publicstech.documentsystem.activity.doc.DocListActivity"/>
         <activity android:name="com.publicstech.documentsystem.activity.doc.DocDetailActivity"/>

@@ -48,17 +48,19 @@ public class NoticeListFragment extends BaseFragment {
 	private NoticeAlListBean noticeListBeanal;
 	private int page;
 	private String method;
+	private String url;
 	public View initView() {
-		
+		url = MApplication.gainData(Const.SERVICE_URL).toString();
 		View view = View.inflate(getActivity(),R.layout.fragment_common, null);
 		ButterKnife.inject(this, view);
 		lvAutodoclist.setOnRefreshListener(new OnRefreshListener() {
 			
+
 			@Override
 			public void onRefresh() {
 				HashMap<String, String> properties = new HashMap<String, String>();
 				properties.put("userID", MApplication.gainData(Const.USERID).toString());
-				ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, method, properties, new WebServiceCallBack() {
+				ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, method, properties, new WebServiceCallBack() {
 					
 					@Override
 					public void onSucced(SoapObject result) {

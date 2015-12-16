@@ -99,8 +99,10 @@ public class DocListActivity extends FragmentActivity {
 	}
 
 	private DocListFragment fragment;
+	private String url;
 
 	private void doBusiness() {
+		url = MApplication.gainData(Const.SERVICE_URL).toString();
 		// 取消tab下面的长横线
 		tabStrip.setDrawFullUnderline(false);
 		// 设置tab的背景色
@@ -114,7 +116,7 @@ public class DocListActivity extends FragmentActivity {
 		viewContainter.add(new DocListFragment());
 		HashMap<String, String> properties = new HashMap<String, String>();
 		properties.put("userID", MApplication.gainData(Const.USERID).toString());
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, Const.GETYBRECSHOUWENLIST, properties, new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, Const.GETYBRECSHOUWENLIST, properties, new WebServiceCallBack() {
 			
 			@Override
 			public void onSucced(SoapObject result) {

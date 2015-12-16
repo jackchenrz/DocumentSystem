@@ -58,6 +58,7 @@ public class SelectActivity extends BaseActivity {
 	private List<OfficDoc> officdocList;
 	private List<Notice> noticeList;
 	private HashMap<String, String> properties = new HashMap<String, String>();
+	private String url;
 	
 	@Override
 	public int bindLayout() {
@@ -100,8 +101,11 @@ public class SelectActivity extends BaseActivity {
 
 	@Override
 	public void doBusiness(Context mContext) {
+		
+		url = MApplication.gainData(Const.SERVICE_URL).toString();
+		
 		properties.put("userID", MApplication.gainData(Const.USERID).toString());
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, Const.GETLIST, properties, new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, Const.GETLIST, properties, new WebServiceCallBack() {
 			
 			@Override
 			public void onSucced(SoapObject result) {
@@ -142,7 +146,7 @@ public class SelectActivity extends BaseActivity {
 	}
 
 	protected void getDocList() {
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, Const.GETDOCLIST, properties, new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, Const.GETDOCLIST, properties, new WebServiceCallBack() {
 			
 			@Override
 			public void onSucced(SoapObject result) {
@@ -184,7 +188,7 @@ public class SelectActivity extends BaseActivity {
 	}
 
 	protected void getNoticeList() {
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, Const.GETNOTICELIST, properties, new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, Const.GETNOTICELIST, properties, new WebServiceCallBack() {
 			
 			@Override
 			public void onSucced(SoapObject result) {

@@ -35,7 +35,6 @@ public abstract class BaseActivity extends Activity implements IBaseActivity{
 	/**共通操作**/
 	/**日志输出标志**/
 	protected final String TAG = this.getClass().getSimpleName();
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

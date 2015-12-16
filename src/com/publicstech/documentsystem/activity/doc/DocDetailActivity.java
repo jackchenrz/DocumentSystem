@@ -59,6 +59,7 @@ public class DocDetailActivity extends BaseActivity {
 	private String param;
 	private Doc doc;
 	private YBDoc ybDoc;
+	private String url;
 	
 	/**
 	 * 添加审批记录
@@ -140,8 +141,9 @@ public class DocDetailActivity extends BaseActivity {
 
 	@Override
 	public void doBusiness(Context mContext) {
+		url = MApplication.gainData(Const.SERVICE_URL).toString();
 		properties.put("recID", param);
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, Const.GETDETAIL, properties , new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, Const.GETDETAIL, properties , new WebServiceCallBack() {
 
 			@Override
 			public void onSucced(SoapObject result) {
@@ -177,7 +179,7 @@ public class DocDetailActivity extends BaseActivity {
 	protected void getAutoRecord(String method,String param) {
 		properties.remove("recID");
 		properties.put("DocID", param);
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
 
 			@Override
 			public void onSucced(SoapObject result) {

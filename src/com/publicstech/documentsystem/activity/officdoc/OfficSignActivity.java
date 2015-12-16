@@ -78,6 +78,7 @@ public class OfficSignActivity extends BaseActivity {
 	private String userIdsStr;
 	private String userId;
 	private HashMap<String, String> properties = new HashMap<String, String>();
+	private String url;
 	
 	
 	@Override
@@ -109,6 +110,7 @@ public class OfficSignActivity extends BaseActivity {
 
 	@Override
 	public void doBusiness(Context mContext) {
+		url = MApplication.gainData(Const.SERVICE_URL).toString();
 		if(stepNo == 2){
 			selUser(Const.SELECTUSER3);
 		}
@@ -122,7 +124,7 @@ public class OfficSignActivity extends BaseActivity {
 		HashMap<String, String> properties = new HashMap<String, String>();
 		properties.put("Token", MApplication.gainData(Const.TOKEN).toString());
 		properties.put("userID", MApplication.gainData(Const.USERID).toString());
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
 
 			@Override
 			public void onSucced(SoapObject result) {
@@ -314,7 +316,7 @@ public class OfficSignActivity extends BaseActivity {
 	 * @param properties
 	 */
 	private void sign(HashMap<String, String> properties,String method) {
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
 			
 			@Override
 			public void onSucced(SoapObject result) {

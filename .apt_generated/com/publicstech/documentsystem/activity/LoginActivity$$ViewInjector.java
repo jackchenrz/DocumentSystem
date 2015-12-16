@@ -9,10 +9,10 @@ public class LoginActivity$$ViewInjector {
     View view;
     view = finder.findRequiredView(source, 2131361806, "field 'etLoginName'");
     target.etLoginName = (android.widget.EditText) view;
-    view = finder.findRequiredView(source, 2131361808, "field 'cbRember'");
-    target.cbRember = (android.widget.CheckBox) view;
     view = finder.findRequiredView(source, 2131361807, "field 'etPassword'");
     target.etPassword = (android.widget.EditText) view;
+    view = finder.findRequiredView(source, 2131361808, "field 'cbRember'");
+    target.cbRember = (android.widget.CheckBox) view;
     view = finder.findRequiredView(source, 2131361809, "method 'onLogin'");
     view.setOnClickListener(
       new butterknife.internal.DebouncingOnClickListener() {
@@ -26,7 +26,7 @@ public class LoginActivity$$ViewInjector {
 
   public static void reset(com.publicstech.documentsystem.activity.LoginActivity target) {
     target.etLoginName = null;
-    target.cbRember = null;
     target.etPassword = null;
+    target.cbRember = null;
   }
 }

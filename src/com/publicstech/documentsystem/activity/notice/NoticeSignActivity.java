@@ -48,6 +48,7 @@ public class NoticeSignActivity extends BaseActivity {
 	
 	private int stepNo;
 	private HashMap<String, String> properties = new HashMap<String, String>();
+	private String url;
 	
 	@Override
 	public int bindLayout() {
@@ -68,7 +69,7 @@ public class NoticeSignActivity extends BaseActivity {
 
 	@Override
 	public void doBusiness(Context mContext) {
-
+		url = MApplication.gainData(Const.SERVICE_URL).toString();
 	}
 
 	@OnClick(R.id.ivNext)
@@ -130,7 +131,7 @@ public class NoticeSignActivity extends BaseActivity {
 	 * @param properties
 	 */
 	private void sign(HashMap<String, String> properties,String method) {
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
 			
 			@Override
 			public void onSucced(SoapObject result) {

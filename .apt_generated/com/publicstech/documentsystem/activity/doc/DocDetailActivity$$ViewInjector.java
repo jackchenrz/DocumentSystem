@@ -19,10 +19,10 @@ public class DocDetailActivity$$ViewInjector {
           target.OnGoSave();
         }
       });
-    view = finder.findRequiredView(source, 2131361800, "field 'tvTime'");
-    target.tvTime = (android.widget.TextView) view;
     view = finder.findRequiredView(source, 2131361802, "field 'ivGosign'");
     target.ivGosign = (android.widget.ImageView) view;
+    view = finder.findRequiredView(source, 2131361800, "field 'tvTime'");
+    target.tvTime = (android.widget.TextView) view;
     view = finder.findRequiredView(source, 2131361799, "field 'tvType'");
     target.tvType = (android.widget.TextView) view;
     view = finder.findRequiredView(source, 2131361798, "field 'tvTitle'");
@@ -32,8 +32,8 @@ public class DocDetailActivity$$ViewInjector {
   public static void reset(com.publicstech.documentsystem.activity.doc.DocDetailActivity target) {
     target.tabLayout = null;
     target.btnGosave = null;
-    target.tvTime = null;
     target.ivGosign = null;
+    target.tvTime = null;
     target.tvType = null;
     target.tvTitle = null;
   }

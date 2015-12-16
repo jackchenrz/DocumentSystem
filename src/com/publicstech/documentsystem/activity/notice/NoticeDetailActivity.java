@@ -59,6 +59,7 @@ public class NoticeDetailActivity extends BaseActivity {
 	private String param;
 	private Notice doc;
 	private YBNotice ybNotice;
+	private String url;
 	
 	/**
 	 * 添加审批记录
@@ -140,8 +141,9 @@ public class NoticeDetailActivity extends BaseActivity {
 
 	@Override
 	public void doBusiness(Context mContext) {
+		url = MApplication.gainData(Const.SERVICE_URL).toString();
 		properties.put("noticeID", param);
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, Const.GETNOTICEDETAIL, properties , new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, Const.GETNOTICEDETAIL, properties , new WebServiceCallBack() {
 
 			@Override
 			public void onSucced(SoapObject result) {
@@ -179,7 +181,7 @@ public class NoticeDetailActivity extends BaseActivity {
 		properties.remove("recID");
 		properties.put("noticeID", param);
 		properties.put("userID", MApplication.gainData(Const.USERID).toString());
-		ToolSOAP.callService(Const.SERVICE_URL, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
+		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, method, properties , new WebServiceCallBack() {
 
 			@Override
 			public void onSucced(SoapObject result) {
