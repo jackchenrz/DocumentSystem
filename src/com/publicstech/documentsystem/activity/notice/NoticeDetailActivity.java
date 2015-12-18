@@ -121,7 +121,7 @@ public class NoticeDetailActivity extends BaseActivity {
 	@Override
 	public void initView(View view) {
 		ButterKnife.inject(this);
-		ToolAlert.loading(this, "正在加载中...");
+		ToolAlert.loading(this, "正在加载中...",false);
 		Intent intent = getIntent();
 		int page = intent.getIntExtra("page", 0);
 		if(page == 0){

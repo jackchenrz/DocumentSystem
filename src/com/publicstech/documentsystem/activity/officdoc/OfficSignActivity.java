@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,8 +33,9 @@ import com.publicstech.documentsystem.bean.SelUserBean.SelUser;
 import com.publicstech.documentsystem.tools.ToolAlert;
 import com.publicstech.documentsystem.tools.ToolJson;
 import com.publicstech.documentsystem.tools.ToolSOAP;
-import com.publicstech.documentsystem.tools.ToolToast;
 import com.publicstech.documentsystem.tools.ToolSOAP.WebServiceCallBack;
+import com.publicstech.documentsystem.tools.ToolThread;
+import com.publicstech.documentsystem.tools.ToolToast;
 
 public class OfficSignActivity extends BaseActivity {
 
@@ -79,6 +81,40 @@ public class OfficSignActivity extends BaseActivity {
 	private String userId;
 	private HashMap<String, String> properties = new HashMap<String, String>();
 	private String url;
+	private Handler handler = new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			final StringBuffer sb = new StringBuffer();
+			final StringBuffer sb1 = new StringBuffer();
+			new  AlertDialog.Builder(OfficSignActivity.this) 
+			.setTitle("选择人员" )  
+			.setMultiChoiceItems(items,  bs ,  new OnMultiChoiceClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+					bs[which] = isChecked;
+				}
+			} ) 
+			.setPositiveButton("确定" , new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					for (int i = 0; i < bs.length; i++) {
+						if(bs[i]){
+							sb.append(items[i]);
+							sb1.append(userIds[i] + ",");
+						}
+					}
+					etClass.setText(sb.toString());
+					MApplication.assignData("signUsers", sb1.toString());
+					items = null;
+					bs = null;
+					userIds = null;
+				}
+			})                  
+			.setNegativeButton("取消" ,  null )  
+			.show();
+		};
+	};
 	
 	
 	@Override
@@ -178,40 +214,17 @@ public class OfficSignActivity extends BaseActivity {
 		items = new String[list.size()];
 		bs = new boolean[list.size()];
 		userIds = new String[list.size()];
-		for (int i = 0; i < items.length; i++) {
-			items[i] = "[" + list.get(i).role_name + "]" + list.get(i).user_name;
-			userIds[i] = list.get(i).user_id;
-		}
-		final StringBuffer sb = new StringBuffer();
-		final StringBuffer sb1 = new StringBuffer();
-		new  AlertDialog.Builder(this) 
-		.setTitle("选择人员" )  
-		.setMultiChoiceItems(items,  bs ,  new OnMultiChoiceClickListener() {
+		ToolThread.runInBackground(new Runnable() {
 			
 			@Override
-			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-				bs[which] = isChecked;
-			}
-		} ) 
-		.setPositiveButton("确定" , new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				for (int i = 0; i < bs.length; i++) {
-					if(bs[i]){
-						sb.append(items[i]);
-						sb1.append(userIds[i] + ",");
-					}
+			public void run() {
+				for (int i = 0; i < items.length; i++) {
+					items[i] = "[" + list.get(i).role_name + "]" + list.get(i).user_name;
+					userIds[i] = list.get(i).user_id;
 				}
-				etClass.setText(sb.toString());
-				MApplication.assignData("signUsers", sb1.toString());
-				items = null;
-				bs = null;
-				userIds = null;
+				handler.sendEmptyMessage(100);
 			}
-		})                  
-		.setNegativeButton("取消" ,  null )  
-		.show();
+		});
 	}
 	
 	@OnClick(R.id.ivNext)
@@ -260,7 +273,7 @@ public class OfficSignActivity extends BaseActivity {
 	@OnClick(R.id.btn_save)
 	public void onSave(){
 		
-		ToolAlert.loading(this, "正在签阅");
+		ToolAlert.loading(this, "正在签阅",false);
 		String text = etText.getText().toString().trim();
 		if(MApplication.gainData("signUsers") != null && !"".equals(MApplication.gainData("signUsers").toString())){
 			userIdsStr = MApplication.gainData("signUsers").toString();
@@ -283,7 +296,7 @@ public class OfficSignActivity extends BaseActivity {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						ToolAlert.loading(OfficSignActivity.this, "正在签阅");
+						ToolAlert.loading(OfficSignActivity.this, "正在签阅",false);
 						sign(properties,Const.SENDDOCSIGNREADINGKEZHANGAUDIT);
 					}
 				},new DialogInterface.OnClickListener() {
@@ -302,7 +315,7 @@ public class OfficSignActivity extends BaseActivity {
 			properties.put("postilDesc", text);
 			sign(properties,Const.SENDDOCSIGNREADINGMAINLEADERAUDIT);
 		}else if(stepNo == 5){
-			properties.put("stepNo", "5");
+			properties.put("stepNo", "6");
 			properties.put("userID", MApplication.gainData(Const.USERID).toString());
 			properties.put("docID", MApplication.gainData(Const.RECID).toString());
 			properties.put("postilDesc", text);

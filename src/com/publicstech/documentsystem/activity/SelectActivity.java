@@ -68,7 +68,7 @@ public class SelectActivity extends BaseActivity {
 	@Override
 	public void initView(View view) {
 		ButterKnife.inject(this);
-		ToolAlert.loading(this, "正在加载中...");
+		ToolAlert.loading(this, "正在加载中...",false);
 	}
 	
 	@OnClick(R.id.ll_document)
@@ -231,7 +231,7 @@ public class SelectActivity extends BaseActivity {
 
 	@Override
 	public void resume() {
-		ToolAlert.loading(this, "正在加载中...");
+		ToolAlert.loading(this, "正在加载中...",false);
 		doBusiness(this);
 	}
 

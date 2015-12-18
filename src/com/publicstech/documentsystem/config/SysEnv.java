@@ -23,7 +23,6 @@ import com.publicstech.documentsystem.MApplication;
 
 /**
  * 运行环境信息
- * @author 曾繁添
  * @version 1.0
  */
 public final class SysEnv {

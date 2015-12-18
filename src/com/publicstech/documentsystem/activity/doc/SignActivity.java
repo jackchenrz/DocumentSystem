@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,6 +35,7 @@ import com.publicstech.documentsystem.bean.SelUserBean.SelUser;
 import com.publicstech.documentsystem.tools.ToolAlert;
 import com.publicstech.documentsystem.tools.ToolJson;
 import com.publicstech.documentsystem.tools.ToolSOAP;
+import com.publicstech.documentsystem.tools.ToolThread;
 import com.publicstech.documentsystem.tools.ToolToast;
 import com.publicstech.documentsystem.tools.ToolSOAP.WebServiceCallBack;
 
@@ -99,6 +101,79 @@ public class SignActivity extends BaseActivity {
 	private String string;
 	private int stepNo;
 	private String url;
+	private final int FILLOK = 100;
+	private final int FILLOK1 = 101;
+	private int flag = 0;
+	private Handler handler = new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+			case FILLOK:
+				final StringBuffer sb = new StringBuffer();
+				final StringBuffer sb1 = new StringBuffer();
+				new  AlertDialog.Builder(SignActivity.this) 
+				.setTitle("选择人员" )  
+				.setMultiChoiceItems(items,  bs ,  new OnMultiChoiceClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+						bs[which] = isChecked;
+					}
+				} ) 
+				.setPositiveButton("确定" , new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						for (int i = 0; i < bs.length; i++) {
+							if(bs[i]){
+								sb.append(items[i]);
+								sb1.append(userIds[i] + ",");
+							}
+						}
+						etClass.setText(sb.toString());
+						MApplication.assignData("signUsers", sb1.toString());
+						items = null;
+						bs = null;
+						userIds = null;
+					}
+				})                  
+				.setNegativeButton("取消" ,  null )  
+				.show();
+				break;
+			case FILLOK1:
+				final StringBuffer sb2 = new StringBuffer();
+				final StringBuffer sb3 = new StringBuffer();
+				new  AlertDialog.Builder(SignActivity.this)  
+				.setTitle("选择人员" )  
+				.setMultiChoiceItems(items,  bs ,  new OnMultiChoiceClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+						bs[which] = isChecked;
+					}
+				} ) 
+				.setPositiveButton("确定" , new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						for (int i = 0; i < bs.length; i++) {
+							if(bs[i]){
+								sb2.append(items[i]);
+								sb3.append(userIds[i] + ",");
+							}
+						}
+						etDep.setText(sb2.toString());
+						MApplication.assignData("lookUsers", sb3.toString());
+						items = null;
+						bs = null;
+						userIds = null;
+					}
+				})                  
+				.setNegativeButton("取消" ,  null )  
+				.show();
+				break;
+			}
+		};
+	};
 	@Override
 	public int bindLayout() {
 		return R.layout.activity_sign;
@@ -128,6 +203,7 @@ public class SignActivity extends BaseActivity {
 				
 				@Override
 				public void afterTextChanged(Editable s) {
+					etClass.setText("");
 					mode = etMode.getText().toString().trim();
 					if(mode.equals(getResources().getString(R.string.stepstep))){
 						llSel2.setVisibility(View.VISIBLE);
@@ -191,13 +267,15 @@ public class SignActivity extends BaseActivity {
 			btnSave.setClickable(false);
 			tvNotify.setText("科室未签阅，暂不可办理。如急于落实，请与相关科室联系，或先行传达落实。");
 		}
-		ToolAlert.loading(this, "正在加载...");
 	}
 
 	@Override
 	public void doBusiness(Context mContext) {
 		url = MApplication.gainData(Const.SERVICE_URL).toString();
-		selUser();
+		if(stepNo != 2){
+			ToolAlert.loading(this, "正在加载...",false);
+			selUser( MApplication.gainData(Const.TOKEN).toString(),0);
+		}
 		MApplication.assignData("signUsers", "");
 		MApplication.assignData("lookUsers", "");
 	}
@@ -206,9 +284,9 @@ public class SignActivity extends BaseActivity {
 	 * 获取选择人员的数据
 	 * @param string
 	 */
-	private void selUser() {
+	private void selUser(String token,final int flag) {
 		HashMap<String, String> properties = new HashMap<String, String>();
-		properties.put("Token", MApplication.gainData(Const.TOKEN).toString());
+		properties.put("Token",token);
 		properties.put("userID", MApplication.gainData(Const.USERID).toString());
 		ToolSOAP.callService(url, Const.SERVICE_NAMESPACE, Const.SELECTUSER2, properties , new WebServiceCallBack() {
 			@Override
@@ -222,6 +300,54 @@ public class SignActivity extends BaseActivity {
 						SelUserBean selFuDuanBean = ToolJson.getJsonBean(string, SelUserBean.class);
 						selList = selFuDuanBean.ds;
 						ToolAlert.closeLoading();
+						if(stepNo == 2){
+							
+							if(flag == 1){
+								etClass.setText("");
+								MApplication.assignData("signUsers", "");
+								list = new ArrayList<SelUser>(selList);
+								if(list.size() == 0){
+									ToolToast.showToast(SignActivity.this, "没有相关人员");
+									return;
+								}
+								items = new String[list.size()];
+								bs = new boolean[list.size()];
+								userIds = new String[list.size()];
+								ToolThread.runInBackground(new Runnable() {
+									
+									@Override
+									public void run() {
+										for (int i = 0; i < items.length; i++) {
+											items[i] = "[" + list.get(i).role_name + "]" + list.get(i).user_name;
+											userIds[i] = list.get(i).user_id;
+										}
+										handler.sendEmptyMessage(FILLOK);
+									}
+								});
+							}else if(flag == 2){
+								etDep.setText("");
+								MApplication.assignData("lookUsers", "");
+								list = new ArrayList<SelUser>(selList);
+								if(list.size() == 0){
+									ToolToast.showToast(SignActivity.this, "没有相关人员");
+									return;
+								}
+								items = new String[list.size()];
+								bs = new boolean[list.size()];
+								userIds = new String[list.size()];
+								ToolThread.runInBackground(new Runnable() {
+									
+									@Override
+									public void run() {
+										for (int i = 0; i < items.length; i++) {
+											items[i] = "[" + list.get(i).role_name + "]" + list.get(i).user_name;
+											userIds[i] = list.get(i).user_id;
+										}
+										handler.sendEmptyMessage(FILLOK1);
+									}
+								});
+							}
+						}
 					}
 					
 				}else{
@@ -244,98 +370,71 @@ public class SignActivity extends BaseActivity {
 	
 	@OnClick(R.id.ivClass)
 	public void onSelClass(){
-		etClass.setText("");
-		MApplication.assignData("signUsers", "");
-		list = new ArrayList<SelUser>(selList);
-		if(list.size() == 0){
-			ToolToast.showToast(this, "没有相关人员");
-			return;
-		}
-		items = new String[list.size()];
-		bs = new boolean[list.size()];
-		userIds = new String[list.size()];
-		for (int i = 0; i < items.length; i++) {
-			items[i] = "[" + list.get(i).role_name + "]" + list.get(i).user_name;
-			userIds[i] = list.get(i).user_id;
-		}
-		final StringBuffer sb = new StringBuffer();
-		final StringBuffer sb1 = new StringBuffer();
-		new  AlertDialog.Builder(this) 
-		.setTitle("选择人员" )  
-		.setMultiChoiceItems(items,  bs ,  new OnMultiChoiceClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-				bs[which] = isChecked;
+		flag = 1;
+		if(stepNo == 2){
+			String mode = etMode.getText().toString().trim();
+			if(getResources().getString(R.string.stepstep).equals(mode)){
+				selUser( MApplication.gainData(Const.TOKEN).toString(),flag);
+			}else if(getResources().getString(R.string.direct).equals(mode)){
+				selUser(getResources().getString(R.string.fuduanzhang),flag);
 			}
-		} ) 
-		.setPositiveButton("确定" , new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				for (int i = 0; i < bs.length; i++) {
-					if(bs[i]){
-						sb.append(items[i]);
-						sb1.append(userIds[i] + ",");
+		}else{
+			etClass.setText("");
+			MApplication.assignData("signUsers", "");
+			list = new ArrayList<SelUser>(selList);
+			if(list.size() == 0){
+				ToolToast.showToast(this, "没有相关人员");
+				return;
+			}
+			items = new String[list.size()];
+			bs = new boolean[list.size()];
+			userIds = new String[list.size()];
+			ToolThread.runInBackground(new Runnable() {
+				
+				@Override
+				public void run() {
+					for (int i = 0; i < items.length; i++) {
+						items[i] = "[" + list.get(i).role_name + "]" + list.get(i).user_name;
+						userIds[i] = list.get(i).user_id;
 					}
+					handler.sendEmptyMessage(FILLOK);
 				}
-				etClass.setText(sb.toString());
-				MApplication.assignData("signUsers", sb1.toString());
-				items = null;
-				bs = null;
-				userIds = null;
-			}
-		})                  
-		.setNegativeButton("取消" ,  null )  
-		.show();
+			});
+			
+		}
+		
+		
 	}
 	
 	@OnClick(R.id.ivDep)
 	public void onSelLookMan(){
-		etDep.setText("");
-		MApplication.assignData("lookUsers", "");
-		list = new ArrayList<SelUser>(selList);
-		if(list.size() == 0){
-			ToolToast.showToast(this, "没有相关人员");
-			return;
-		}
-		items = new String[list.size()];
-		bs = new boolean[list.size()];
-		userIds = new String[list.size()];
-		for (int i = 0; i < items.length; i++) {
-			items[i] = "[" + list.get(i).role_name + "]" + list.get(i).user_name;
-			userIds[i] = list.get(i).user_id;
-		}
-		final StringBuffer sb = new StringBuffer();
-		final StringBuffer sb1 = new StringBuffer();
-		new  AlertDialog.Builder(this)  
-		.setTitle("选择人员" )  
-		.setMultiChoiceItems(items,  bs ,  new OnMultiChoiceClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-				bs[which] = isChecked;
+		flag = 2;
+		if(stepNo == 2){
+			selUser(getResources().getString(R.string.fuduanzhang),flag);
+		}else{
+			etDep.setText("");
+			MApplication.assignData("lookUsers", "");
+			list = new ArrayList<SelUser>(selList);
+			if(list.size() == 0){
+				ToolToast.showToast(this, "没有相关人员");
+				return;
 			}
-		} ) 
-		.setPositiveButton("确定" , new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				for (int i = 0; i < bs.length; i++) {
-					if(bs[i]){
-						sb.append(items[i]);
-						sb1.append(userIds[i] + ",");
+			items = new String[list.size()];
+			bs = new boolean[list.size()];
+			userIds = new String[list.size()];
+			ToolThread.runInBackground(new Runnable() {
+				
+				@Override
+				public void run() {
+					for (int i = 0; i < items.length; i++) {
+						items[i] = "[" + list.get(i).role_name + "]" + list.get(i).user_name;
+						userIds[i] = list.get(i).user_id;
 					}
+					handler.sendEmptyMessage(FILLOK1);
 				}
-				etDep.setText(sb.toString());
-				MApplication.assignData("lookUsers", sb1.toString());
-				items = null;
-				bs = null;
-				userIds = null;
-			}
-		})                  
-		.setNegativeButton("取消" ,  null )  
-		.show();
+			});
+		}
+		
 	}
 	
 	
@@ -424,7 +523,7 @@ public class SignActivity extends BaseActivity {
 	
 	@OnClick(R.id.btn_save)
 	public void onSave(){
-		ToolAlert.loading(this, "正在签阅");
+		ToolAlert.loading(this, "正在签阅",false);
 		String text = etText.getText().toString().trim();
 		mode = etMode.getText().toString().trim();
 		if(MApplication.gainData("signUsers") != null && !"".equals(MApplication.gainData("signUsers").toString())){
@@ -456,7 +555,7 @@ public class SignActivity extends BaseActivity {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						ToolAlert.loading(SignActivity.this, "正在签阅");
+						ToolAlert.loading(SignActivity.this, "正在签阅",false);
 						sign(properties,Const.SIGNREADINGDUANZHANG);
 					}
 				},new DialogInterface.OnClickListener() {
@@ -480,7 +579,7 @@ public class SignActivity extends BaseActivity {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						ToolAlert.loading(SignActivity.this, "正在签阅");
+						ToolAlert.loading(SignActivity.this, "正在签阅",false);
 						sign(properties,Const.SIGNREADINGFUDUAN);
 					}
 				},new DialogInterface.OnClickListener() {
@@ -507,7 +606,7 @@ public class SignActivity extends BaseActivity {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							ToolAlert.loading(SignActivity.this, "正在签阅");
+							ToolAlert.loading(SignActivity.this, "正在签阅",false);
 							sign(properties,Const.SIGNREADINGKESHIKZ);
 						}
 					},new DialogInterface.OnClickListener() {
@@ -540,7 +639,7 @@ public class SignActivity extends BaseActivity {
 							
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								ToolAlert.loading(SignActivity.this, "正在签阅");
+								ToolAlert.loading(SignActivity.this, "正在签阅",false);
 								sign(properties,Const.SIGNREADINGKESHIQP);
 							}
 						},new DialogInterface.OnClickListener() {
@@ -576,7 +675,7 @@ public class SignActivity extends BaseActivity {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							ToolAlert.loading(SignActivity.this, "正在签阅");
+							ToolAlert.loading(SignActivity.this, "正在签阅",false);
 							sign(properties,Const.SIGNREADINGCHEJIANZR);
 						}
 					},new DialogInterface.OnClickListener() {

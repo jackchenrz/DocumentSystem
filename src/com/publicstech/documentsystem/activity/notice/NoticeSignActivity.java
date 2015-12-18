@@ -106,7 +106,7 @@ public class NoticeSignActivity extends BaseActivity {
 	
 	@OnClick(R.id.btn_save)
 	public void onSave(){
-		ToolAlert.loading(this, "正在签阅");
+		ToolAlert.loading(this, "正在签阅",false);
 		String text = etText.getText().toString().trim();
 		if(stepNo == 2){
 			properties.put("stepNo", "3");

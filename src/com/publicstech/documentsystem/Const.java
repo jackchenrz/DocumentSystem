@@ -12,7 +12,7 @@ public class Const {
 //	public static final String SERVICE_URL = "http://192.168.1.50:7021/RecSerApp.asmx";
 	public static final String SERVICE_URL = "service_url";
 	public static final String SERVICE_NAMESPACE = "http://tempuri.org/";
-	public static final String LOCAL = "la";
+	public static final String LOCAL = "local";
 	public static final String LOCALPWD = "111111";
 	public static final String SERVICE_IP = "ip";
 	public static final String SERVICE_PORT = "port";
