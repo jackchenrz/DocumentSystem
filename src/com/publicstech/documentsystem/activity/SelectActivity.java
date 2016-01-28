@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ksoap2.serialization.SoapObject;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -59,6 +60,7 @@ public class SelectActivity extends BaseActivity {
 	private List<Notice> noticeList;
 	private HashMap<String, String> properties = new HashMap<String, String>();
 	private String url;
+	private Dialog loadingDialog;
 	
 	@Override
 	public int bindLayout() {
@@ -68,7 +70,8 @@ public class SelectActivity extends BaseActivity {
 	@Override
 	public void initView(View view) {
 		ButterKnife.inject(this);
-		ToolAlert.loading(this, "正在加载中...",false);
+		loadingDialog = ToolAlert.createLoadingDialog(this, "正在加载中...");
+		loadingDialog.show();
 	}
 	
 	@OnClick(R.id.ll_document)
@@ -130,7 +133,7 @@ public class SelectActivity extends BaseActivity {
 					getDocList();
 				}else{
 					ToolToast.showToast(SelectActivity.this, "联网失败");
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 				}
 			}
 			
@@ -139,7 +142,7 @@ public class SelectActivity extends BaseActivity {
 				if(result != null){
 					Log.d(TAG, result);
 				}
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolToast.showToast(SelectActivity.this, "联网错误，请检查网络连接");
 			}
 		});
@@ -168,11 +171,10 @@ public class SelectActivity extends BaseActivity {
 						mBadgeViewForChat.setBadgeCount(officdocList.size());
 					}
 					mBadgeViewForChat.setTargetView(ivOfficdoc);
-					
 					getNoticeList();
 				}else{
 					ToolToast.showToast(SelectActivity.this, "联网失败");
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 				}
 			}
 			
@@ -181,7 +183,7 @@ public class SelectActivity extends BaseActivity {
 				if(result != null){
 					Log.d(TAG, result);
 				}
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolToast.showToast(SelectActivity.this, "联网错误，请检查网络连接");
 			}
 		});
@@ -210,11 +212,10 @@ public class SelectActivity extends BaseActivity {
 						mBadgeViewForChat.setBadgeCount(noticeList.size());
 					}
 					mBadgeViewForChat.setTargetView(ivNotice);
-					ToolAlert.closeLoading();
-					
+					loadingDialog.dismiss();
 				}else{
 					ToolToast.showToast(SelectActivity.this, "联网失败");
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 				}
 			}
 			
@@ -223,7 +224,7 @@ public class SelectActivity extends BaseActivity {
 				if(result != null){
 					Log.d(TAG, result);
 				}
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolToast.showToast(SelectActivity.this, "联网错误，请检查网络连接");
 			}
 		});
@@ -231,7 +232,7 @@ public class SelectActivity extends BaseActivity {
 
 	@Override
 	public void resume() {
-		ToolAlert.loading(this, "正在加载中...",false);
+		loadingDialog.show();
 		doBusiness(this);
 	}
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ksoap2.serialization.SoapObject;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -60,6 +61,7 @@ public class OfficDocDetailActivity extends BaseActivity {
 	private OfficDoc officedoc;
 	private YBOffcDoc ybofficDoc;
 	private String url;
+	private Dialog loadingDialog;
 	
 	/**
 	 * 添加审批记录
@@ -121,7 +123,8 @@ public class OfficDocDetailActivity extends BaseActivity {
 	@Override
 	public void initView(View view) {
 		ButterKnife.inject(this);
-		ToolAlert.loading(this, "正在加载中...",false);
+		loadingDialog = ToolAlert.createLoadingDialog(this, "正在加载中...");
+		loadingDialog.show();
 		Intent intent = getIntent();
 		int page = intent.getIntExtra("page", 0);
 		if(page == 0){
@@ -161,15 +164,16 @@ public class OfficDocDetailActivity extends BaseActivity {
 					getAutoRecord(Const.AUDITRECORDDOC,param);
 				}else{
 					ToolToast.showToast(OfficDocDetailActivity.this, "联网失败");
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 				}
 			}
 			
 			@Override
 			public void onFailure(String result) {
-			if(result != null){
-				Log.d(TAG, result);
+				if(result != null){
+					Log.d(TAG, result);
 				}
+				loadingDialog.dismiss();
 			}
 		});
 		
@@ -189,17 +193,17 @@ public class OfficDocDetailActivity extends BaseActivity {
 					String string = result.getProperty(0).toString();
 					Log.d(TAG, string);
 					if("404".equals(string)){
-						ToolAlert.closeLoading();
+						loadingDialog.dismiss();
 						ToolToast.showToast(OfficDocDetailActivity.this, "没有该记录");
 					}else{
 						approveRecordBean = ToolJson.getJsonBean(string, ApproveRecordBean.class);
 						record = approveRecordBean.ds;
 						addTab();
-						ToolAlert.closeLoading();
+						loadingDialog.dismiss();
 					}
 				}else{
 					ToolToast.showToast(OfficDocDetailActivity.this, "联网失败");
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();;
 				}
 			}
 			
@@ -208,7 +212,7 @@ public class OfficDocDetailActivity extends BaseActivity {
 				if(result != null){
 					Log.d(TAG, result);
 				}
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolToast.showToast(OfficDocDetailActivity.this, "联网错误，请检查网络连接");
 			}
 		});

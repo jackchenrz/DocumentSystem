@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.ksoap2.serialization.SoapObject;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -56,16 +57,17 @@ public class LoginActivity extends BaseActivity{
 			ToolToast.showToast(this, "帐号或密码不能为空");
 			return;
 		}
-		ToolAlert.loading(this, "正在登陆，请稍后...", false);
+		loadingDialog = ToolAlert.createLoadingDialog(this, "正在登陆，请稍后...");
+		loadingDialog.show();
 		if(Const.LOCAL.equalsIgnoreCase(userName) && Const.LOCALPWD.equals(pwd)){
-			ToolAlert.closeLoading();
+			loadingDialog.dismiss();
 			Intent intent = new Intent(this,SettingActivity.class);
 			startActivity(intent);
 		}else{
 			MApplication.assignData(Const.USERNAME, userName);
 			url = "http://" + ToolSP.getString(this, Const.SERVICE_IP, "") + ":" + ToolSP.getString(this, Const.SERVICE_PORT, "") + "/RecSerApp.asmx";
 			if("".equals(ToolSP.getString(this, Const.SERVICE_IP, ""))){
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolToast.showToast(this, "请先联系管理员设置IP地址");
 				return;
 			}
@@ -86,7 +88,7 @@ public class LoginActivity extends BaseActivity{
 			@Override
 			public void onSucced(SoapObject result) {
 				if(result != null){
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 					String string = result.getProperty(0).toString();
 					Log.d(TAG, string);
 					if("404".equals(string)){
@@ -107,19 +109,19 @@ public class LoginActivity extends BaseActivity{
 							startActivity(intent);
 						}else{
 							ToolToast.showToast(LoginActivity.this, "联网错误");
-							ToolAlert.closeLoading();
+							loadingDialog.dismiss();
 						}
 					}
 					
 				}else{
 					ToolToast.showToast(LoginActivity.this, "登陆失败");
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 				}
 			}
 			
 			@Override
 			public void onFailure(String result) {
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				if(result != null){
 					Log.d(TAG, result);
 				}
@@ -151,6 +153,7 @@ public class LoginActivity extends BaseActivity{
 	}
 	private long exitTime = 0;
 	private String url;
+	private Dialog loadingDialog;
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

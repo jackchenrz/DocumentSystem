@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.ksoap2.serialization.SoapObject;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -49,6 +50,7 @@ public class NoticeSignActivity extends BaseActivity {
 	private int stepNo;
 	private HashMap<String, String> properties = new HashMap<String, String>();
 	private String url;
+	private Dialog loadingDialog;
 	
 	@Override
 	public int bindLayout() {
@@ -106,7 +108,8 @@ public class NoticeSignActivity extends BaseActivity {
 	
 	@OnClick(R.id.btn_save)
 	public void onSave(){
-		ToolAlert.loading(this, "正在签阅",false);
+		loadingDialog = ToolAlert.createLoadingDialog(this, "正在签阅...");
+		loadingDialog.show();
 		String text = etText.getText().toString().trim();
 		if(stepNo == 2){
 			properties.put("stepNo", "3");
@@ -139,18 +142,18 @@ public class NoticeSignActivity extends BaseActivity {
 					String string = result.getProperty(0).toString();
 					if("success".equals(string)){
 						ToolToast.showToast(NoticeSignActivity.this, "签阅成功");
-						ToolAlert.closeLoading();
+						loadingDialog.dismiss();
 						Intent intent = new Intent(NoticeSignActivity.this,SelectActivity.class);
 						NoticeListActivity.instance.finish();
 						mApplication.removeToTop();
 						startActivity(intent);
 					}else{
-						ToolAlert.closeLoading();
+						loadingDialog.dismiss();
 					}
 					
 				}else{
 					ToolToast.showToast(NoticeSignActivity.this, "联网失败");
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 				}
 			}
 			
@@ -159,7 +162,7 @@ public class NoticeSignActivity extends BaseActivity {
 				if(result != null){
 					Log.d(TAG, result);
 				}
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolToast.showToast(NoticeSignActivity.this, "联网错误，请检查网络连接");
 			}
 		});

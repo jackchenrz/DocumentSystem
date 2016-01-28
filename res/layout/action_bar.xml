@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:orientation="vertical"
-    android:background="@drawable/repairsystem_title" >
+    android:background="@color/title" >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >

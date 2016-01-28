@@ -7,6 +7,7 @@ import java.util.List;
 import org.ksoap2.serialization.SoapObject;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -174,6 +175,7 @@ public class SignActivity extends BaseActivity {
 			}
 		};
 	};
+	private Dialog loadingDialog;
 	@Override
 	public int bindLayout() {
 		return R.layout.activity_sign;
@@ -402,8 +404,6 @@ public class SignActivity extends BaseActivity {
 			});
 			
 		}
-		
-		
 	}
 	
 	@OnClick(R.id.ivDep)
@@ -523,7 +523,8 @@ public class SignActivity extends BaseActivity {
 	
 	@OnClick(R.id.btn_save)
 	public void onSave(){
-		ToolAlert.loading(this, "正在签阅",false);
+		loadingDialog = ToolAlert.createLoadingDialog(this, "正在签阅...");
+		loadingDialog.show();
 		String text = etText.getText().toString().trim();
 		mode = etMode.getText().toString().trim();
 		if(MApplication.gainData("signUsers") != null && !"".equals(MApplication.gainData("signUsers").toString())){
@@ -550,12 +551,12 @@ public class SignActivity extends BaseActivity {
 			properties.put("recID", MApplication.gainData(Const.RECID).toString());
 			if(MApplication.gainData("signUsers") == null ||
 					"".equals(MApplication.gainData("signUsers"))){
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolAlert.dialog(this, null, "您确定不选择审批人员吗？", new DialogInterface.OnClickListener() {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						ToolAlert.loading(SignActivity.this, "正在签阅",false);
+						loadingDialog.show();
 						sign(properties,Const.SIGNREADINGDUANZHANG);
 					}
 				},new DialogInterface.OnClickListener() {
@@ -575,11 +576,12 @@ public class SignActivity extends BaseActivity {
 			properties.put("recID", MApplication.gainData(Const.RECID).toString());
 			if(MApplication.gainData("signUsers") == null || 
 					"".equals(MApplication.gainData("signUsers"))){
+				loadingDialog.dismiss();
 				ToolAlert.dialog(this, null, "您确定不选择审批人员吗？", new DialogInterface.OnClickListener() {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						ToolAlert.loading(SignActivity.this, "正在签阅",false);
+						loadingDialog.show();
 						sign(properties,Const.SIGNREADINGFUDUAN);
 					}
 				},new DialogInterface.OnClickListener() {
@@ -601,12 +603,12 @@ public class SignActivity extends BaseActivity {
 				properties.put("recID", MApplication.gainData(Const.RECID).toString());
 				if(MApplication.gainData("signUsers") == null ||
 						"".equals(MApplication.gainData("signUsers"))){
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 					ToolAlert.dialog(this, null, "您确定不选择审批人员吗？", new DialogInterface.OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							ToolAlert.loading(SignActivity.this, "正在签阅",false);
+							loadingDialog.show();
 							sign(properties,Const.SIGNREADINGKESHIKZ);
 						}
 					},new DialogInterface.OnClickListener() {
@@ -634,12 +636,12 @@ public class SignActivity extends BaseActivity {
 					properties.put("recID", MApplication.gainData(Const.RECID).toString());
 					if(MApplication.gainData("signUsers") == null ||
 							"".equals(MApplication.gainData("signUsers"))){
-						ToolAlert.closeLoading();
+						loadingDialog.dismiss();
 						ToolAlert.dialog(this, null, "您确定不选择审批人员吗？", new DialogInterface.OnClickListener() {
 							
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								ToolAlert.loading(SignActivity.this, "正在签阅",false);
+								loadingDialog.show();
 								sign(properties,Const.SIGNREADINGKESHIQP);
 							}
 						},new DialogInterface.OnClickListener() {
@@ -670,12 +672,12 @@ public class SignActivity extends BaseActivity {
 				properties.put("recID", MApplication.gainData(Const.RECID).toString());
 				if(MApplication.gainData("signUsers") == null ||
 						"".equals(MApplication.gainData("signUsers"))){
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 					ToolAlert.dialog(this, null, "您确定不选择审批人员吗？", new DialogInterface.OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							ToolAlert.loading(SignActivity.this, "正在签阅",false);
+							loadingDialog.show();
 							sign(properties,Const.SIGNREADINGCHEJIANZR);
 						}
 					},new DialogInterface.OnClickListener() {
@@ -708,18 +710,18 @@ public class SignActivity extends BaseActivity {
 					Log.d(TAG, string);
 					if("success".equals(string) || "404".equals(string)){
 						ToolToast.showToast(SignActivity.this, "签阅成功");
-						ToolAlert.closeLoading();
+						loadingDialog.dismiss();
 						Intent intent = new Intent(SignActivity.this,SelectActivity.class);
 						DocListActivity.instance.finish();
 						mApplication.removeToTop();
 						startActivity(intent);
 					}else{
-						ToolAlert.closeLoading();
+						loadingDialog.dismiss();
 					}
 					
 				}else{
 					ToolToast.showToast(SignActivity.this, "联网失败");
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 				}
 			}
 			
@@ -728,7 +730,7 @@ public class SignActivity extends BaseActivity {
 				if(result != null){
 					Log.d(TAG, result);
 				}
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolToast.showToast(SignActivity.this, "联网错误，请检查网络连接");
 			}
 		});

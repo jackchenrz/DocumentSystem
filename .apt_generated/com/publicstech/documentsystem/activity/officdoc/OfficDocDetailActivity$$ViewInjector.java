@@ -7,12 +7,16 @@ import butterknife.ButterKnife.Finder;
 public class OfficDocDetailActivity$$ViewInjector {
   public static void inject(Finder finder, final com.publicstech.documentsystem.activity.officdoc.OfficDocDetailActivity target, Object source) {
     View view;
+    view = finder.findRequiredView(source, 2131361798, "field 'tvTitle'");
+    target.tvTitle = (android.widget.TextView) view;
+    view = finder.findRequiredView(source, 2131361800, "field 'tvTime'");
+    target.tvTime = (android.widget.TextView) view;
+    view = finder.findRequiredView(source, 2131361799, "field 'tvType'");
+    target.tvType = (android.widget.TextView) view;
     view = finder.findRequiredView(source, 2131361801, "field 'tabLayout'");
     target.tabLayout = (android.widget.TableLayout) view;
     view = finder.findRequiredView(source, 2131361802, "field 'ivGosign'");
     target.ivGosign = (android.widget.ImageView) view;
-    view = finder.findRequiredView(source, 2131361800, "field 'tvTime'");
-    target.tvTime = (android.widget.TextView) view;
     view = finder.findRequiredView(source, 2131361803, "field 'btnGosave' and method 'OnGoSave'");
     target.btnGosave = (android.widget.Button) view;
     view.setOnClickListener(
@@ -23,18 +27,14 @@ public class OfficDocDetailActivity$$ViewInjector {
           target.OnGoSave();
         }
       });
-    view = finder.findRequiredView(source, 2131361799, "field 'tvType'");
-    target.tvType = (android.widget.TextView) view;
-    view = finder.findRequiredView(source, 2131361798, "field 'tvTitle'");
-    target.tvTitle = (android.widget.TextView) view;
   }
 
   public static void reset(com.publicstech.documentsystem.activity.officdoc.OfficDocDetailActivity target) {
+    target.tvTitle = null;
+    target.tvTime = null;
+    target.tvType = null;
     target.tabLayout = null;
     target.ivGosign = null;
-    target.tvTime = null;
     target.btnGosave = null;
-    target.tvType = null;
-    target.tvTitle = null;
   }
 }

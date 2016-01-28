@@ -7,6 +7,7 @@ import java.util.List;
 import org.ksoap2.serialization.SoapObject;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -115,6 +116,7 @@ public class OfficSignActivity extends BaseActivity {
 			.show();
 		};
 	};
+	private Dialog loadingDialog;
 	
 	
 	@Override
@@ -273,7 +275,8 @@ public class OfficSignActivity extends BaseActivity {
 	@OnClick(R.id.btn_save)
 	public void onSave(){
 		
-		ToolAlert.loading(this, "正在签阅",false);
+		loadingDialog = ToolAlert.createLoadingDialog(this, "正在签阅...");
+		loadingDialog.show();
 		String text = etText.getText().toString().trim();
 		if(MApplication.gainData("signUsers") != null && !"".equals(MApplication.gainData("signUsers").toString())){
 			userIdsStr = MApplication.gainData("signUsers").toString();
@@ -291,12 +294,12 @@ public class OfficSignActivity extends BaseActivity {
 			properties.put("postilDesc", text);
 			if(MApplication.gainData("signUsers") == null ||
 					"".equals(MApplication.gainData("signUsers"))){
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolAlert.dialog(this, null, "您确定不选择审批人员吗？", new DialogInterface.OnClickListener() {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						ToolAlert.loading(OfficSignActivity.this, "正在签阅",false);
+						loadingDialog.show();
 						sign(properties,Const.SENDDOCSIGNREADINGKEZHANGAUDIT);
 					}
 				},new DialogInterface.OnClickListener() {
@@ -337,18 +340,18 @@ public class OfficSignActivity extends BaseActivity {
 					String string = result.getProperty(0).toString();
 					if("success".equals(string)){
 						ToolToast.showToast(OfficSignActivity.this, "签阅成功");
-						ToolAlert.closeLoading();
+						loadingDialog.dismiss();
 						Intent intent = new Intent(OfficSignActivity.this,SelectActivity.class);
 						OfficDocListActivity.instance.finish();
 						mApplication.removeToTop();
 						startActivity(intent);
 					}else{
-						ToolAlert.closeLoading();
+						loadingDialog.dismiss();
 					}
 					
 				}else{
 					ToolToast.showToast(OfficSignActivity.this, "联网失败");
-					ToolAlert.closeLoading();
+					loadingDialog.dismiss();
 				}
 			}
 			
@@ -357,7 +360,7 @@ public class OfficSignActivity extends BaseActivity {
 				if(result != null){
 					Log.d(TAG, result);
 				}
-				ToolAlert.closeLoading();
+				loadingDialog.dismiss();
 				ToolToast.showToast(OfficSignActivity.this, "联网错误，请检查网络连接");
 			}
 		});

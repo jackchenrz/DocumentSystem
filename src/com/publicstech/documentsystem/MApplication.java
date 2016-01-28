@@ -1,10 +1,7 @@
 package com.publicstech.documentsystem;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
@@ -19,8 +16,10 @@ import java.util.Stack;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
-import android.util.Log;
+
+import com.publicstech.documentsystem.activity.LoginActivity;
 
 public class MApplication extends Application {
 
@@ -49,7 +48,12 @@ public class MApplication extends Application {
 		 
         @Override
         public void uncaughtException(Thread thread, Throwable ex) {
-            writeErrorLog(ex);
+        	writeErrorLog(ex);
+        	 Intent intent = new Intent();
+             intent.setClass(instance,LoginActivity.class);
+             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+             instance.startActivity(intent);
+             android.os.Process.killProcess(android.os.Process.myPid());
         }
 	};
 
@@ -138,12 +142,16 @@ public class MApplication extends Application {
      * @param ex
      */
     protected void writeErrorLog(Throwable ex) {
-        String info = null;
-        ByteArrayOutputStream baos = null;
+    	 File dir = new File(LOG_DIR);
+         if (!dir.exists()) {
+             dir.mkdirs();
+         }
+         File file = new File(dir, LOG_NAME);
+         FileOutputStream fileOutputStream = null;
         PrintStream printStream = null;
         try {
-            baos = new ByteArrayOutputStream();
-            printStream = new PrintStream(baos);
+        	fileOutputStream = new FileOutputStream(file, true);
+            printStream = new PrintStream(fileOutputStream);
 
 			// 先写入手机的信息
 			Class<?> clazz = Class.forName("android.os.Build");
@@ -155,39 +163,21 @@ public class MApplication extends Application {
 			}
 			printStream.println("=============我是一条分隔线=====================");
             ex.printStackTrace(printStream);
-            byte[] data = baos.toByteArray();
-            info = new String(data);
-            data = null;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
                 if (printStream != null) {
+                	printStream.flush();
                     printStream.close();
                 }
-                if (baos != null) {
-                    baos.close();
+                if(fileOutputStream != null){
+                	 fileOutputStream.close();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        Log.d("example", "崩溃信息\n" + info);
-        File dir = new File(LOG_DIR);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        File file = new File(dir, LOG_NAME);
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file, true);
-            fileOutputStream.write(info.getBytes());
-            fileOutputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
- 
     }
     
     /**

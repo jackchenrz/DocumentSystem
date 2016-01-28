@@ -10,13 +10,17 @@ package com.publicstech.documentsystem;
 public final class R {
     public static final class anim {
         public static final int base_slide_right_out=0x7f040000;
+        public static final int load_animation=0x7f040001;
     }
     public static final class attr {
     }
     public static final class color {
         public static final int brown=0x7f050002;
+        public static final int darkblack=0x7f050005;
         public static final int darkwhite=0x7f050003;
+        public static final int item_bg=0x7f050006;
         public static final int red=0x7f050001;
+        public static final int title=0x7f050004;
         public static final int white=0x7f050000;
     }
     public static final class dimen {
@@ -30,46 +34,52 @@ public final class R {
         public static final int activity_vertical_margin=0x7f060001;
     }
     public static final class drawable {
-        public static final int btn_back_bg=0x7f020000;
-        public static final int button=0x7f020001;
-        public static final int button_login=0x7f020002;
-        public static final int button_look=0x7f020003;
-        public static final int clipboard=0x7f020004;
-        public static final int com_logo=0x7f020005;
-        public static final int custom_progress_bar=0x7f020006;
-        public static final int desktop=0x7f020007;
-        public static final int h_line=0x7f020008;
-        public static final int ic_launcher=0x7f020009;
-        public static final int line=0x7f02000a;
-        public static final int linertour_right_n=0x7f02000b;
-        public static final int linertour_right_p=0x7f02000c;
-        public static final int ll_bg=0x7f02000d;
-        public static final int loading_0=0x7f02000e;
-        public static final int loading_1=0x7f02000f;
-        public static final int loading_2=0x7f020010;
-        public static final int loading_3=0x7f020011;
-        public static final int loading_4=0x7f020012;
-        public static final int loading_5=0x7f020013;
-        public static final int loading_6=0x7f020014;
-        public static final int loading_7=0x7f020015;
-        public static final int login_btn=0x7f020016;
-        public static final int login_input_bg=0x7f020017;
-        public static final int notepad=0x7f020018;
-        public static final int notes=0x7f020019;
-        public static final int pull_to_refresh_arrow=0x7f02001a;
-        public static final int repairsystem_title=0x7f02001b;
-        public static final int setting_bg=0x7f02001c;
-        public static final int toggledown=0x7f02001d;
-        public static final int welcomelogo=0x7f02001e;
+        public static final int btn_login_n=0x7f020000;
+        public static final int btn_login_p=0x7f020001;
+        public static final int button=0x7f020002;
+        public static final int button_login=0x7f020003;
+        public static final int button_look=0x7f020004;
+        public static final int clipboard=0x7f020005;
+        public static final int com_logo=0x7f020006;
+        public static final int custom_progress_bar=0x7f020007;
+        public static final int desktop=0x7f020008;
+        public static final int go=0x7f020009;
+        public static final int go2=0x7f02000a;
+        public static final int h_line=0x7f02000b;
+        public static final int ic_launcher=0x7f02000c;
+        public static final int item_click=0x7f02000d;
+        public static final int iv_click=0x7f02000e;
+        public static final int line=0x7f02000f;
+        public static final int linertour_right_n=0x7f020010;
+        public static final int linertour_right_p=0x7f020011;
+        public static final int ll_bg=0x7f020012;
+        public static final int loading_0=0x7f020013;
+        public static final int loading_1=0x7f020014;
+        public static final int loading_2=0x7f020015;
+        public static final int loading_3=0x7f020016;
+        public static final int loading_4=0x7f020017;
+        public static final int loading_5=0x7f020018;
+        public static final int loading_6=0x7f020019;
+        public static final int loading_7=0x7f02001a;
+        public static final int login_input_bg=0x7f02001b;
+        public static final int notepad=0x7f02001c;
+        public static final int notes=0x7f02001d;
+        public static final int publicloading=0x7f02001e;
+        public static final int pull_to_refresh_arrow=0x7f02001f;
+        public static final int repairsystem_title=0x7f020020;
+        public static final int setting_bg=0x7f020021;
+        public static final int toggledown=0x7f020022;
+        public static final int welcomelogo=0x7f020023;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a0040;
-        public static final int arrow=0x7f0a003f;
+        public static final int action_settings=0x7f0a0043;
+        public static final int arrow=0x7f0a0042;
         public static final int btnLogin=0x7f0a0011;
         public static final int btnSave=0x7f0a002c;
         public static final int btn_gosave=0x7f0a000b;
         public static final int btn_save=0x7f0a001a;
         public static final int cb_rember=0x7f0a0010;
+        public static final int dialog_view=0x7f0a003b;
         public static final int etClass=0x7f0a001e;
         public static final int etDep=0x7f0a002d;
         public static final int etLoginName=0x7f0a000e;
@@ -79,6 +89,7 @@ public final class R {
         public static final int etServerIP=0x7f0a002a;
         public static final int etServerPort=0x7f0a002b;
         public static final int etText=0x7f0a0019;
+        public static final int img=0x7f0a003c;
         public static final int ivClass=0x7f0a001f;
         public static final int ivDep=0x7f0a002e;
         public static final int ivMode=0x7f0a0033;
@@ -91,8 +102,8 @@ public final class R {
         public static final int iv_line_seluser=0x7f0a0020;
         public static final int iv_notice=0x7f0a0029;
         public static final int iv_officdoc=0x7f0a0027;
-        public static final int lastUpdate=0x7f0a003e;
-        public static final int layout=0x7f0a003b;
+        public static final int lastUpdate=0x7f0a0041;
+        public static final int layout=0x7f0a003e;
         public static final int layoutCenter=0x7f0a000d;
         public static final int line=0x7f0a003a;
         public static final int ll=0x7f0a0000;
@@ -111,10 +122,11 @@ public final class R {
         public static final int noData=0x7f0a0036;
         public static final int proBar=0x7f0a0012;
         public static final int progressBar=0x7f0a0004;
-        public static final int refreshing=0x7f0a003c;
+        public static final int refreshing=0x7f0a003f;
         public static final int tab=0x7f0a0009;
         public static final int tabstrip=0x7f0a0002;
-        public static final int tip=0x7f0a003d;
+        public static final int tip=0x7f0a0040;
+        public static final int tipTextView=0x7f0a003d;
         public static final int tv_company=0x7f0a0014;
         public static final int tv_desc_loading=0x7f0a0005;
         public static final int tv_doc=0x7f0a0039;
@@ -144,7 +156,8 @@ public final class R {
         public static final int fragment_common=0x7f03000b;
         public static final int listview_footer=0x7f03000c;
         public static final int listview_item=0x7f03000d;
-        public static final int pull_to_refresh_header=0x7f03000e;
+        public static final int loading_dialog=0x7f03000e;
+        public static final int pull_to_refresh_header=0x7f03000f;
     }
     public static final class menu {
         public static final int main=0x7f090000;
@@ -219,5 +232,6 @@ public final class R {
          */
         public static final int AppTheme=0x7f080001;
         public static final int customProgressBar=0x7f080002;
+        public static final int loading_dialog=0x7f080003;
     }
 }

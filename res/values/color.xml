@@ -4,4 +4,7 @@
     <color name="red">#FF0000</color>
     <color name="brown">#FCC138</color>
     <color name="darkwhite">#EAEAEA</color>
+    <color name="title">#55C1FF</color>
+    <color name="darkblack">#AA000000</color>
+    <color name="item_bg">#D3D3D3</color>
 </resources>
